@@ -414,14 +414,21 @@
   <div class="app">
     <aside>
       <h1>Duty Roster</h1>
-      <p>Create a monthly roster for three shifts with fixed 2- or 3-person teams.</p>
+      <p>Create a date-range roster for three shifts with fixed 2- or 3-person teams.</p>
 
       <div class="stack">
         <div class="grid">
           <div>
-            <label for="month">Month</label>
-            <input id="month" type="month">
+            <label for="startDate">From date</label>
+            <input id="startDate" type="date">
           </div>
+          <div>
+            <label for="endDate">To date</label>
+            <input id="endDate" type="date">
+          </div>
+        </div>
+
+        <div class="grid">
           <div>
             <label for="startIndex">Start from</label>
             <select id="startIndex"></select>
@@ -446,7 +453,7 @@ Group 4: Saahil, Azmath</textarea>
           </div>
           <div>
             <label for="time1">Time</label>
-            <input id="time1" value="08-16">
+            <input id="time1" value="00:00-08:00">
           </div>
         </div>
         <div class="shift-row">
@@ -456,7 +463,7 @@ Group 4: Saahil, Azmath</textarea>
           </div>
           <div>
             <label for="time2">Time</label>
-            <input id="time2" value="16-00">
+            <input id="time2" value="08:00-16:00">
           </div>
         </div>
         <div class="shift-row">
@@ -466,7 +473,7 @@ Group 4: Saahil, Azmath</textarea>
           </div>
           <div>
             <label for="time3">Time</label>
-            <input id="time3" value="00-08">
+            <input id="time3" value="16:00-00:00">
           </div>
         </div>
       </div>
@@ -499,7 +506,7 @@ Group 4: Saahil, Azmath</textarea>
     <main>
       <div class="topbar">
         <div>
-          <h1 id="title">3 Shift Monthly Roster</h1>
+          <h1 id="title">3 Shift Duty Roster</h1>
           <p id="subtitle">Add staff, define shifts, then generate the schedule.</p>
         </div>
         <div class="actions">
@@ -533,7 +540,8 @@ Group 4: Saahil, Azmath</textarea>
 
   <script>
     const els = {
-      month: document.querySelector("#month"),
+      startDate: document.querySelector("#startDate"),
+      endDate: document.querySelector("#endDate"),
       staff: document.querySelector("#staff"),
       startIndex: document.querySelector("#startIndex"),
       shifts: [
@@ -561,9 +569,12 @@ Group 4: Saahil, Azmath</textarea>
 
     let rosterRows = [];
 
-    function initMonth() {
+    function initDateRange() {
       const now = new Date();
-      els.month.value = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, "0")}`;
+      const start = new Date(now.getFullYear(), now.getMonth(), 1);
+      const end = new Date(now.getFullYear(), now.getMonth() + 1, 0);
+      els.startDate.value = formatDate(start);
+      els.endDate.value = formatDate(end);
     }
 
     function splitMemberNames(value) {
@@ -658,9 +669,14 @@ Group 4: Saahil, Azmath</textarea>
       return `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, "0")}-${String(date.getDate()).padStart(2, "0")}`;
     }
 
-    function monthName(value) {
-      const [year, month] = value.split("-").map(Number);
-      return new Date(year, month - 1, 1).toLocaleDateString(undefined, { month: "long", year: "numeric" });
+    function rangeLabel(startValue, endValue) {
+      const start = new Date(startValue);
+      const end = new Date(endValue);
+      if (Number.isNaN(start.getTime()) || Number.isNaN(end.getTime())) {
+        return "Custom Range";
+      }
+      const format = { day: "2-digit", month: "short", year: "numeric" };
+      return `${start.toLocaleDateString(undefined, format)} to ${end.toLocaleDateString(undefined, format)}`;
     }
 
     function getStaffPerShift() {
@@ -714,17 +730,20 @@ Group 4: Saahil, Azmath</textarea>
       const { staff, teams, reserves } = getTeamConfig(staffPerShift, start);
       const errors = [];
 
-      if (!els.month.value) errors.push("Choose a month before generating.");
+      if (!els.startDate.value || !els.endDate.value) errors.push("Choose start and end dates before generating.");
       if (!staff.length) errors.push("Add at least one staff name.");
       if (!teams.length) errors.push("Add at least one group.");
+      if (els.startDate.value && els.endDate.value && new Date(els.startDate.value) > new Date(els.endDate.value)) {
+        errors.push("From date must be before or equal to To date.");
+      }
 
       if (errors.length) {
         renderWarnings(errors);
         return;
       }
 
-      const [year, month] = els.month.value.split("-").map(Number);
-      const daysInMonth = new Date(year, month, 0).getDate();
+      const startDate = new Date(els.startDate.value);
+      const endDate = new Date(els.endDate.value);
       const counts = Object.fromEntries(staff.map(name => [name, Object.fromEntries(shifts.map(shift => [shift.name, 0]))]));
       const totalCounts = Object.fromEntries(staff.map(name => [name, 0]));
       const offCounts = Object.fromEntries(staff.map(name => [name, 0]));
@@ -743,14 +762,16 @@ Group 4: Saahil, Azmath</textarea>
 
       rosterRows = [];
 
-      for (let day = 1; day <= daysInMonth; day++) {
-        const date = new Date(year, month - 1, day);
-        const iso = formatDate(date);
+      let dayCounter = 0;
+      for (let date = new Date(startDate); date <= endDate; date.setDate(date.getDate() + 1)) {
+        const currentDate = new Date(date);
+        dayCounter += 1;
+        const iso = formatDate(currentDate);
         const offList = [];
         const row = {
           date: iso,
-          day: date.toLocaleDateString(undefined, { weekday: "short" }),
-          isWeekend: date.getDay() === 0 || date.getDay() === 6,
+          day: currentDate.toLocaleDateString(undefined, { weekday: "short" }),
+          isWeekend: currentDate.getDay() === 0 || currentDate.getDay() === 6,
           offList,
           shifts: Object.fromEntries(shifts.map(shift => [shift.name, []]))
         };
@@ -758,7 +779,7 @@ Group 4: Saahil, Azmath</textarea>
         teams.forEach((team, teamIndex) => {
           const leaveMembers = team.members.filter(name => leave.get(name.toLowerCase())?.has(iso));
           const columnCount = shifts.length + 1;
-          const rotationStep = (day - 1) % columnCount;
+          const rotationStep = (dayCounter - 1) % columnCount;
           const columnIndex = (teamIndex - rotationStep + columnCount) % columnCount;
 
           if (columnIndex < shifts.length && !leaveMembers.length) {
@@ -819,7 +840,7 @@ Group 4: Saahil, Azmath</textarea>
 
     function renderRoster(rows, shifts, counts, totalCounts, offCounts, teams, teamCounts, reserves, warnings) {
       renderWarnings(warnings);
-      els.title.textContent = `3 Shift Roster - ${monthName(els.month.value)}`;
+      els.title.textContent = `3 Shift Roster - ${rangeLabel(els.startDate.value, els.endDate.value)}`;
       els.subtitle.textContent = `${teams.length} fixed teams assigned across ${shifts.map(shift => shift.name).join(", ")} plus Off as the 4th shift.`;
       els.daysCount.textContent = rows.length;
       els.staffCount.textContent = getStaff().length;
@@ -890,7 +911,7 @@ Group 4: Saahil, Azmath</textarea>
       const url = URL.createObjectURL(blob);
       const link = document.createElement("a");
       link.href = url;
-      link.download = `duty-roster-${els.month.value}.csv`;
+      link.download = `duty-roster-${els.startDate.value}-to-${els.endDate.value}.csv`;
       link.click();
       URL.revokeObjectURL(url);
     }
@@ -910,6 +931,7 @@ Group 4: Saahil, Azmath</textarea>
       els.staff.value = "";
       els.leave.value = "";
       els.staffPerShift.value = "3";
+      initDateRange();
       rosterRows = [];
       updateStartOptions();
       els.tableWrap.innerHTML = `<div class="empty"><div><h1>Ready for duty planning</h1><p>Add staff and generate a roster whenever you are ready.</p></div></div>`;
@@ -927,7 +949,7 @@ Group 4: Saahil, Azmath</textarea>
     els.clear.addEventListener("click", clearAll);
     els.copy.addEventListener("click", copyTable);
 
-    initMonth();
+    initDateRange();
     updateStartOptions();
   </script>
 </body>
