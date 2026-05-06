@@ -4,6 +4,9 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>3 Shift Duty Roster</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:ital,wght@0,400;0,500;0,600;0,700;0,800;1,400&display=swap" rel="stylesheet">
   <style>
     :root {
       --bg: #2b2f36;
@@ -15,11 +18,14 @@
       --brand: #4b5563;
       --brand-dark: #374151;
       --soft: #f3f4f6;
+      --main-bg: #e4e6eb;
+      --main-bg-deep: #dcdfe5;
+      --card-bg: #f0f1f4;
       --warn: #fff3d4;
       --danger: #dc2626;
       --shadow: 0 18px 40px rgba(2, 8, 23, 0.22);
       --radius: 16px;
-      font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      font-family: "Plus Jakarta Sans", ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif;
     }
 
     * {
@@ -42,59 +48,101 @@
     .app {
       min-height: 100vh;
       display: grid;
-      grid-template-columns: minmax(320px, 390px) 1fr;
-      gap: 18px;
-      padding: 18px;
+      grid-template-columns: minmax(252px, 300px) 1fr;
+      gap: 14px;
+      padding: 14px;
     }
 
     aside {
       background: linear-gradient(180deg, #2f343c 0%, #1f2329 100%);
       color: #e2e8f0;
       border: 1px solid rgba(255, 255, 255, 0.12);
-      border-radius: calc(var(--radius) + 4px);
+      border-radius: calc(var(--radius) + 2px);
       box-shadow: var(--shadow);
-      padding: 24px;
+      padding: 14px;
       overflow-y: auto;
+      overflow-x: hidden;
+      font-size: 11.5px;
+      line-height: 1.45;
+      -webkit-font-smoothing: antialiased;
     }
 
     main {
-      background: linear-gradient(180deg, #f8faff 0%, #eef3ff 100%);
-      border: 1px solid var(--line);
-      border-radius: calc(var(--radius) + 4px);
+      background: linear-gradient(180deg, var(--main-bg) 0%, var(--main-bg-deep) 100%);
+      border: 1px solid #c5cad3;
+      border-radius: calc(var(--radius) + 2px);
       box-shadow: var(--shadow);
-      padding: 24px;
+      padding: 16px;
       overflow: auto;
     }
 
+    main .topbar p,
+    main #subtitle {
+      color: var(--muted);
+    }
+
     h1 {
-      font-size: 28px;
+      font-size: 24px;
       line-height: 1.12;
-      margin: 0 0 8px;
+      margin: 0 0 6px;
       letter-spacing: -0.02em;
     }
 
     h2 {
-      font-size: 15px;
-      margin: 22px 0 10px;
+      font-size: 13px;
+      margin: 16px 0 8px;
       color: #cbd5e1;
       letter-spacing: 0.01em;
       text-transform: uppercase;
     }
 
-    p {
-      color: #cbd5e1;
-      margin: 0 0 16px;
-      line-height: 1.55;
+    aside p {
+      color: #94a3b8;
+      margin: 0 0 10px;
+      line-height: 1.45;
+      font-size: 11px;
+    }
+
+    aside h1 {
+      font-size: 17px;
+      font-weight: 800;
+      letter-spacing: -0.03em;
+      line-height: 1.15;
+      margin: 0 0 4px;
+    }
+
+    aside h2 {
+      font-size: 10px;
+      font-weight: 700;
+      letter-spacing: 0.11em;
+      margin: 12px 0 6px;
+      padding-top: 10px;
+      border-top: 1px solid rgba(255, 255, 255, 0.1);
+      color: #94a3b8;
+    }
+
+    aside h2:first-of-type {
+      margin-top: 4px;
+      padding-top: 8px;
+      border-top: 0;
     }
 
     label {
       display: block;
-      font-size: 12px;
+      font-size: 11px;
       color: #e5e7eb;
       font-weight: 700;
-      margin-bottom: 6px;
+      margin-bottom: 4px;
       text-transform: uppercase;
       letter-spacing: 0.04em;
+    }
+
+    aside label {
+      font-size: 9px;
+      letter-spacing: 0.08em;
+      margin-bottom: 3px;
+      line-height: 1.25;
+      color: #cbd5e1;
     }
 
     input,
@@ -105,16 +153,32 @@
       border-radius: 10px;
       background: rgba(255, 255, 255, 0.96);
       color: #0f172a;
-      min-height: 40px;
-      padding: 9px 11px;
+      min-height: 36px;
+      padding: 7px 9px;
       outline: none;
       transition: border-color 0.18s ease, box-shadow 0.18s ease;
     }
 
     textarea {
-      min-height: 112px;
+      min-height: 88px;
       resize: vertical;
       line-height: 1.45;
+    }
+
+    aside input,
+    aside select,
+    aside textarea {
+      font-size: 11px;
+      min-height: 30px;
+      padding: 5px 7px;
+      border-radius: 7px;
+      width: 100%;
+      max-width: 100%;
+    }
+
+    aside textarea {
+      min-height: 58px;
+      line-height: 1.4;
     }
 
     input:focus,
@@ -124,22 +188,42 @@
       box-shadow: 0 0 0 4px rgba(75, 85, 99, 0.2);
     }
 
+    aside input:focus,
+    aside select:focus,
+    aside textarea:focus {
+      box-shadow: 0 0 0 2px rgba(148, 163, 184, 0.5);
+    }
+
     .grid {
       display: grid;
       grid-template-columns: 1fr 1fr;
-      gap: 10px;
+      gap: 8px;
+    }
+
+    aside .grid {
+      grid-template-columns: 1fr;
+      gap: 6px;
     }
 
     .stack {
       display: grid;
-      gap: 12px;
+      gap: 10px;
+    }
+
+    aside .stack {
+      gap: 8px;
     }
 
     .shift-row {
       display: grid;
-      grid-template-columns: 1fr 92px;
-      gap: 8px;
+      grid-template-columns: 1fr 76px;
+      gap: 6px;
       align-items: end;
+    }
+
+    aside .shift-row {
+      grid-template-columns: 1fr minmax(0, 4.75rem);
+      gap: 5px;
     }
 
     .actions {
@@ -149,11 +233,29 @@
       margin-top: 16px;
     }
 
+    aside .actions {
+      gap: 5px;
+      margin-top: 12px;
+    }
+
+    aside .actions button {
+      flex: 1 1 calc(50% - 3px);
+      min-width: 0;
+      font-size: 10px;
+      font-weight: 700;
+      min-height: 30px;
+      padding: 5px 6px;
+      border-radius: 6px;
+      letter-spacing: 0.02em;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.25);
+    }
+
     button {
       border: 1px solid transparent;
-      border-radius: 10px;
-      min-height: 40px;
-      padding: 8px 13px;
+      border-radius: 8px;
+      min-height: 36px;
+      padding: 6px 10px;
+      font-size: 13px;
       cursor: pointer;
       background: linear-gradient(180deg, #6b7280 0%, var(--brand) 100%);
       color: #fff;
@@ -193,39 +295,39 @@
       display: flex;
       justify-content: space-between;
       align-items: flex-start;
-      gap: 16px;
-      margin-bottom: 18px;
+      gap: 12px;
+      margin-bottom: 14px;
     }
 
     .summary {
       display: grid;
-      grid-template-columns: repeat(4, minmax(140px, 1fr));
-      gap: 10px;
-      margin-bottom: 16px;
+      grid-template-columns: repeat(4, minmax(96px, 1fr));
+      gap: 8px;
+      margin-bottom: 12px;
     }
 
     .stat,
     .panel {
-      background: #fff;
-      border: 1px solid var(--line);
+      background: var(--card-bg);
+      border: 1px solid #c5cad3;
       border-radius: var(--radius);
     }
 
     .stat {
-      padding: 13px;
+      padding: 10px;
       box-shadow: 0 8px 24px rgba(15, 23, 42, 0.06);
     }
 
     .stat strong {
       display: block;
-      font-size: 22px;
+      font-size: 18px;
       margin-bottom: 2px;
       letter-spacing: -0.01em;
     }
 
     .stat span {
       color: var(--muted);
-      font-size: 11px;
+      font-size: 10px;
       font-weight: 800;
       text-transform: uppercase;
       letter-spacing: 0.08em;
@@ -238,53 +340,125 @@
 
     .table-wrap {
       overflow: auto;
-      max-height: calc(100vh - 240px);
+      max-height: calc(100vh - 220px);
+      background: var(--main-bg);
+      border-radius: 12px;
+      border: 1px solid rgba(15, 23, 42, 0.1);
+      box-shadow:
+        0 1px 2px rgba(15, 23, 42, 0.04),
+        0 12px 32px rgba(15, 23, 42, 0.08);
     }
 
-    table {
+    table.roster-table {
       width: 100%;
       border-collapse: separate;
       border-spacing: 0;
-      min-width: 760px;
-      background: #fff;
+      min-width: 620px;
+      background: var(--card-bg);
+      font-size: 12px;
+      line-height: 1.4;
     }
 
-    th,
-    td {
-      border-bottom: 1px solid var(--line);
-      border-right: 1px solid var(--line);
-      padding: 10px 11px;
+    table.roster-table th,
+    table.roster-table td {
       text-align: left;
       vertical-align: top;
-      white-space: nowrap;
     }
 
-    th:last-child,
-    td:last-child {
+    table.roster-table thead th {
+      position: sticky;
+      top: 0;
+      z-index: 2;
+      padding: 9px 8px;
+      font-size: 10px;
+      font-weight: 800;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      color: #f9fafb;
+      background: linear-gradient(180deg, #3d4554 0%, #252b36 100%);
+      border-bottom: 2px solid #1a1f26;
+      border-right: 1px solid rgba(255, 255, 255, 0.1);
+      box-shadow: 0 1px 0 rgba(255, 255, 255, 0.06) inset;
+    }
+
+    table.roster-table thead th:first-child {
+      border-top-left-radius: 10px;
+    }
+
+    table.roster-table thead th:last-child {
+      border-top-right-radius: 10px;
       border-right: 0;
     }
 
-    th {
-      position: sticky;
-      top: 0;
-      z-index: 1;
-      background: #e5e7eb;
-      color: #374151;
-      font-size: 12px;
-      text-transform: uppercase;
-      letter-spacing: 0.04em;
+    table.roster-table thead .badge {
+      margin-top: 4px;
+      background: rgba(255, 255, 255, 0.14);
+      color: #e5e7eb;
+      border: 1px solid rgba(255, 255, 255, 0.22);
+      font-weight: 700;
+      letter-spacing: 0.02em;
+      text-transform: none;
     }
 
-    tbody tr:nth-child(even) td {
+    table.roster-table tbody td {
+      padding: 7px 8px;
+      border-right: 1px solid #eef2f6;
+      border-bottom: 1px solid #e8ecf1;
+      white-space: normal;
+      max-width: 220px;
+      word-break: break-word;
+    }
+
+    table.roster-table tbody td:last-child {
+      border-right: 0;
+      background: linear-gradient(180deg, #fafbfc 0%, #f3f4f6 100%);
+      color: #4b5563;
+      font-size: 11px;
+    }
+
+    table.roster-table tbody td:first-child,
+    table.roster-table tbody td:nth-child(2) {
+      white-space: nowrap;
+      font-variant-numeric: tabular-nums;
       background: #f8fafc;
+      font-weight: 600;
+      color: #334155;
+    }
+
+    table.roster-table tbody tr:nth-child(even) td:not(:first-child):not(:nth-child(2)) {
+      background: rgba(248, 250, 252, 0.85);
+    }
+
+    table.roster-table tbody tr:not(.weekend):hover td {
+      background: rgba(99, 102, 241, 0.06);
+    }
+
+    table.roster-table tbody tr:not(.weekend):hover td:first-child,
+    table.roster-table tbody tr:not(.weekend):hover td:nth-child(2) {
+      background: #eef2ff;
+    }
+
+    table.roster-table tbody tr:not(.weekend):hover td:last-child {
+      background: rgba(238, 242, 255, 0.95);
     }
 
     .day {
       font-weight: 800;
+      color: #111827;
     }
 
+    /* Highlight official public holidays: Friday & Saturday */
     .weekend td {
       background: var(--warn) !important;
+    }
+
+    table.roster-table tbody tr.weekend td:first-child,
+    table.roster-table tbody tr.weekend td:nth-child(2) {
+      background: #fde68a !important;
+    }
+
+    table.roster-table tbody tr.weekend td:last-child {
+      background: #fef3c7 !important;
     }
 
     .empty {
@@ -303,10 +477,10 @@
       display: inline-flex;
       align-items: center;
       border-radius: 999px;
-      padding: 3px 8px;
+      padding: 2px 6px;
       background: var(--soft);
       color: #374151;
-      font-size: 11px;
+      font-size: 10px;
       font-weight: 800;
       margin-top: 4px;
     }
@@ -330,16 +504,16 @@
 
     .counts {
       display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(190px, 1fr));
-      gap: 10px;
-      margin-top: 16px;
+      grid-template-columns: repeat(auto-fit, minmax(148px, 1fr));
+      gap: 8px;
+      margin-top: 12px;
     }
 
     .count-card {
-      background: #fff;
-      border: 1px solid var(--line);
+      background: var(--card-bg);
+      border: 1px solid #c5cad3;
       border-radius: var(--radius);
-      padding: 13px;
+      padding: 10px;
       box-shadow: 0 8px 22px rgba(15, 23, 42, 0.06);
     }
 
@@ -351,8 +525,8 @@
     .count-card span {
       display: block;
       color: var(--muted);
-      font-size: 13px;
-      line-height: 1.6;
+      font-size: 12px;
+      line-height: 1.55;
     }
 
 
@@ -372,14 +546,23 @@
     }
 
     @media print {
+      @page {
+        margin: 10mm 12mm;
+        size: auto;
+      }
+
       body {
         background: #fff;
+        color: #0f172a;
+        -webkit-print-color-adjust: exact;
+        print-color-adjust: exact;
       }
 
       aside,
       .topbar .actions,
-      .warnings {
-        display: none;
+      .warnings,
+      .counts {
+        display: none !important;
       }
 
       .app {
@@ -394,18 +577,127 @@
         background: #fff;
       }
 
+      main .topbar {
+        display: block !important;
+        padding-bottom: 10px;
+        margin-bottom: 14px;
+        border-bottom: 3px solid #1e293b;
+      }
+
+      main .topbar h1 {
+        font-size: 18pt;
+        line-height: 1.15;
+        margin: 0 0 4px;
+        letter-spacing: -0.02em;
+      }
+
+      main .topbar p {
+        margin: 0;
+        font-size: 10pt;
+        color: #475569 !important;
+        line-height: 1.4;
+      }
+
+      .summary {
+        display: grid;
+        grid-template-columns: repeat(4, 1fr);
+        gap: 8px;
+        margin-bottom: 12px;
+        page-break-inside: avoid;
+      }
+
+      .stat {
+        padding: 8px 10px;
+        border: 1px solid #cbd5e1;
+        box-shadow: none;
+        border-radius: 6px;
+      }
+
+      .stat strong {
+        font-size: 14pt;
+      }
+
+      .stat span {
+        font-size: 8pt;
+      }
+
+      .panel {
+        border: 1px solid #94a3b8;
+        border-radius: 8px;
+        overflow: hidden;
+        box-shadow: none;
+      }
+
       .table-wrap {
         max-height: none;
         overflow: visible;
+        border: 0;
+        border-radius: 0;
+        box-shadow: none;
       }
 
-      table {
+      table.roster-table {
         min-width: 0;
-        font-size: 11px;
+        width: 100%;
+        font-size: 8.5pt;
+        line-height: 1.35;
+        border-collapse: collapse;
       }
 
-      th {
+      table.roster-table thead th {
         position: static;
+        padding: 7px 6px;
+        font-size: 7.5pt;
+        letter-spacing: 0.04em;
+        border: 1px solid #334155;
+        border-radius: 0;
+        background: #1e293b !important;
+        color: #fff !important;
+        box-shadow: none;
+      }
+
+      table.roster-table thead .badge {
+        margin-top: 4px;
+        padding: 2px 6px;
+        font-size: 6.5pt;
+        background: rgba(255, 255, 255, 0.14) !important;
+        color: #f1f5f9 !important;
+        border: 1px solid rgba(255, 255, 255, 0.25);
+      }
+
+      table.roster-table tbody td {
+        padding: 5px 6px;
+        border: 1px solid #cbd5e1;
+        max-width: none;
+        vertical-align: top;
+      }
+
+      table.roster-table tbody td:first-child,
+      table.roster-table tbody td:nth-child(2) {
+        background: #f1f5f9 !important;
+        font-weight: 700;
+      }
+
+      table.roster-table tbody td:last-child {
+        background: #f8fafc !important;
+      }
+
+      table.roster-table tbody tr:nth-child(even) td {
+        background: #f8fafc !important;
+      }
+
+      table.roster-table tbody tr:nth-child(even) td:first-child,
+      table.roster-table tbody tr:nth-child(even) td:nth-child(2) {
+        background: #e2e8f0 !important;
+      }
+
+      table.roster-table tbody tr.weekend td {
+        background: #fffbeb !important;
+      }
+
+      table.roster-table tbody tr.weekend td:first-child,
+      table.roster-table tbody tr.weekend td:nth-child(2) {
+        background: #fde68a !important;
       }
     }
   </style>
@@ -414,7 +706,7 @@
   <div class="app">
     <aside>
       <h1>Duty Roster</h1>
-      <p>Create a date-range roster for three shifts with fixed 2- or 3-person teams.</p>
+      <p>Date-range roster: 3 shifts, 2- or 3-person teams.</p>
 
       <div class="stack">
         <div class="grid">
@@ -482,7 +774,7 @@ Group 4: Saahil, Azmath</textarea>
       <div class="stack">
         <div class="grid">
           <div>
-            <label for="staffPerShift">Plain-name group size</label>
+            <label for="staffPerShift" title="For plain name lists (no Group: lines), build teams of this size.">Group size</label>
             <select id="staffPerShift">
               <option value="2">2 persons</option>
               <option value="3" selected>3 persons</option>
@@ -490,7 +782,7 @@ Group 4: Saahil, Azmath</textarea>
           </div>
         </div>
         <div>
-          <label for="leave">Leave / unavailable dates</label>
+          <label for="leave">Leave / unavailable</label>
           <textarea id="leave" placeholder="Example:&#10;Suhaadh: 2026-05-05, 2026-05-12&#10;Azleen: 2026-05-09"></textarea>
         </div>
       </div>
@@ -771,7 +1063,8 @@ Group 4: Saahil, Azmath</textarea>
         const row = {
           date: iso,
           day: currentDate.toLocaleDateString(undefined, { weekday: "short" }),
-          isWeekend: currentDate.getDay() === 0 || currentDate.getDay() === 6,
+          /* Fri–Sat = official public holiday (getDay: Sun=0 … Fri=5, Sat=6) */
+          isPublicHoliday: currentDate.getDay() === 5 || currentDate.getDay() === 6,
           offList,
           shifts: Object.fromEntries(shifts.map(shift => [shift.name, []]))
         };
@@ -792,7 +1085,7 @@ Group 4: Saahil, Azmath</textarea>
               totalCounts[name] += 1;
             });
 
-            row.shifts[shift.name].push(`${team.name}: ${team.members.join(", ")}`);
+            row.shifts[shift.name].push(team.members.join(", "));
             return;
           }
 
@@ -806,7 +1099,7 @@ Group 4: Saahil, Azmath</textarea>
           team.members.forEach(name => {
             offCounts[name] += 1;
           });
-          offList.push(`${team.name} (${reason}): ${team.members.join(", ")}`);
+          offList.push(`${team.members.join(", ")} (${reason})`);
         });
 
         shifts.forEach(shift => {
@@ -848,13 +1141,14 @@ Group 4: Saahil, Azmath</textarea>
       els.dutiesCount.textContent = rows.length * getStaff().length;
 
       const table = document.createElement("table");
+      table.className = "roster-table";
       const thead = document.createElement("thead");
       const tbody = document.createElement("tbody");
       thead.innerHTML = `<tr><th>Date</th><th>Day</th>${shifts.map(shift => `<th>${escapeHtml(shift.name)}<br><span class="badge">${escapeHtml(shift.time || "Shift")}</span></th>`).join("")}<th>Off<br><span class="badge">4th shift</span></th></tr>`;
 
       rows.forEach(row => {
         const tr = document.createElement("tr");
-        if (row.isWeekend) tr.classList.add("weekend");
+        if (row.isPublicHoliday) tr.classList.add("weekend");
         tr.innerHTML = `<td class="day">${row.date}</td><td>${row.day}</td>${shifts.map(shift => `<td>${escapeHtml(row.shifts[shift.name].join("; "))}</td>`).join("")}<td>${escapeHtml(row.offList.join("; ") || "-")}</td>`;
         tbody.appendChild(tr);
       });
