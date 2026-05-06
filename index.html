@@ -6,15 +6,15 @@
   <title>3 Shift Duty Roster</title>
   <style>
     :root {
-      --bg: #0b1020;
-      --bg-accent: #1e293b;
+      --bg: #2b2f36;
+      --bg-accent: #3f4652;
       --panel: #ffffff;
       --ink: #0f172a;
       --muted: #64748b;
       --line: #d9e2ef;
-      --brand: #7c3aed;
-      --brand-dark: #6d28d9;
-      --soft: #f4edff;
+      --brand: #4b5563;
+      --brand-dark: #374151;
+      --soft: #f3f4f6;
       --warn: #fff3d4;
       --danger: #dc2626;
       --shadow: 0 18px 40px rgba(2, 8, 23, 0.22);
@@ -29,7 +29,7 @@
     body {
       margin: 0;
       color: var(--ink);
-      background: radial-gradient(circle at 10% -10%, #334155 0%, transparent 30%), var(--bg);
+      background: radial-gradient(circle at 10% -10%, #4b5563 0%, transparent 30%), var(--bg);
     }
 
     button,
@@ -48,7 +48,7 @@
     }
 
     aside {
-      background: linear-gradient(180deg, #111827 0%, #1e1b4b 100%);
+      background: linear-gradient(180deg, #2f343c 0%, #1f2329 100%);
       color: #e2e8f0;
       border: 1px solid rgba(255, 255, 255, 0.12);
       border-radius: calc(var(--radius) + 4px);
@@ -90,7 +90,7 @@
     label {
       display: block;
       font-size: 12px;
-      color: #dbeafe;
+      color: #e5e7eb;
       font-weight: 700;
       margin-bottom: 6px;
       text-transform: uppercase;
@@ -121,7 +121,7 @@
     select:focus,
     textarea:focus {
       border-color: var(--brand);
-      box-shadow: 0 0 0 4px rgba(124, 58, 237, 0.2);
+      box-shadow: 0 0 0 4px rgba(75, 85, 99, 0.2);
     }
 
     .grid {
@@ -155,11 +155,11 @@
       min-height: 40px;
       padding: 8px 13px;
       cursor: pointer;
-      background: linear-gradient(180deg, #8b5cf6 0%, var(--brand) 100%);
+      background: linear-gradient(180deg, #6b7280 0%, var(--brand) 100%);
       color: #fff;
       font-weight: 800;
       transition: transform 0.16s ease, box-shadow 0.18s ease, filter 0.2s ease;
-      box-shadow: 0 10px 20px rgba(124, 58, 237, 0.28);
+      box-shadow: 0 10px 20px rgba(55, 65, 81, 0.28);
     }
 
     button:hover {
@@ -173,7 +173,7 @@
 
     button.secondary {
       background: #fff;
-      color: #4c1d95;
+      color: #374151;
       border-color: var(--line);
       box-shadow: 0 4px 14px rgba(15, 23, 42, 0.08);
     }
@@ -268,15 +268,15 @@
       position: sticky;
       top: 0;
       z-index: 1;
-      background: #ede9fe;
-      color: #4c1d95;
+      background: #e5e7eb;
+      color: #374151;
       font-size: 12px;
       text-transform: uppercase;
       letter-spacing: 0.04em;
     }
 
     tbody tr:nth-child(even) td {
-      background: #f6f4ff;
+      background: #f8fafc;
     }
 
     .day {
@@ -305,7 +305,7 @@
       border-radius: 999px;
       padding: 3px 8px;
       background: var(--soft);
-      color: #4c1d95;
+      color: #374151;
       font-size: 11px;
       font-weight: 800;
       margin-top: 4px;
@@ -355,20 +355,6 @@
       line-height: 1.6;
     }
 
-    .theme-pill {
-      display: inline-flex;
-      align-items: center;
-      margin-bottom: 12px;
-      padding: 4px 10px;
-      border-radius: 999px;
-      background: rgba(139, 92, 246, 0.2);
-      border: 1px solid rgba(196, 181, 253, 0.4);
-      color: #ddd6fe;
-      font-size: 11px;
-      letter-spacing: 0.08em;
-      text-transform: uppercase;
-      font-weight: 700;
-    }
 
     @media (max-width: 920px) {
       .app {
@@ -427,7 +413,6 @@
 <body>
   <div class="app">
     <aside>
-      <div class="theme-pill">Modern UI active</div>
       <h1>Duty Roster</h1>
       <p>Create a monthly roster for three shifts with fixed 2- or 3-person teams.</p>
 
