@@ -1,0 +1,949 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>3 Shift Duty Roster</title>
+  <style>
+    :root {
+      --bg: #0b1020;
+      --bg-accent: #1e293b;
+      --panel: #ffffff;
+      --ink: #0f172a;
+      --muted: #64748b;
+      --line: #d9e2ef;
+      --brand: #7c3aed;
+      --brand-dark: #6d28d9;
+      --soft: #f4edff;
+      --warn: #fff3d4;
+      --danger: #dc2626;
+      --shadow: 0 18px 40px rgba(2, 8, 23, 0.22);
+      --radius: 16px;
+      font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      color: var(--ink);
+      background: radial-gradient(circle at 10% -10%, #334155 0%, transparent 30%), var(--bg);
+    }
+
+    button,
+    input,
+    select,
+    textarea {
+      font: inherit;
+    }
+
+    .app {
+      min-height: 100vh;
+      display: grid;
+      grid-template-columns: minmax(320px, 390px) 1fr;
+      gap: 18px;
+      padding: 18px;
+    }
+
+    aside {
+      background: linear-gradient(180deg, #111827 0%, #1e1b4b 100%);
+      color: #e2e8f0;
+      border: 1px solid rgba(255, 255, 255, 0.12);
+      border-radius: calc(var(--radius) + 4px);
+      box-shadow: var(--shadow);
+      padding: 24px;
+      overflow-y: auto;
+    }
+
+    main {
+      background: linear-gradient(180deg, #f8faff 0%, #eef3ff 100%);
+      border: 1px solid var(--line);
+      border-radius: calc(var(--radius) + 4px);
+      box-shadow: var(--shadow);
+      padding: 24px;
+      overflow: auto;
+    }
+
+    h1 {
+      font-size: 28px;
+      line-height: 1.12;
+      margin: 0 0 8px;
+      letter-spacing: -0.02em;
+    }
+
+    h2 {
+      font-size: 15px;
+      margin: 22px 0 10px;
+      color: #cbd5e1;
+      letter-spacing: 0.01em;
+      text-transform: uppercase;
+    }
+
+    p {
+      color: #cbd5e1;
+      margin: 0 0 16px;
+      line-height: 1.55;
+    }
+
+    label {
+      display: block;
+      font-size: 12px;
+      color: #dbeafe;
+      font-weight: 700;
+      margin-bottom: 6px;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+    }
+
+    input,
+    select,
+    textarea {
+      width: 100%;
+      border: 1px solid var(--line);
+      border-radius: 10px;
+      background: rgba(255, 255, 255, 0.96);
+      color: #0f172a;
+      min-height: 40px;
+      padding: 9px 11px;
+      outline: none;
+      transition: border-color 0.18s ease, box-shadow 0.18s ease;
+    }
+
+    textarea {
+      min-height: 112px;
+      resize: vertical;
+      line-height: 1.45;
+    }
+
+    input:focus,
+    select:focus,
+    textarea:focus {
+      border-color: var(--brand);
+      box-shadow: 0 0 0 4px rgba(124, 58, 237, 0.2);
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+    }
+
+    .stack {
+      display: grid;
+      gap: 12px;
+    }
+
+    .shift-row {
+      display: grid;
+      grid-template-columns: 1fr 92px;
+      gap: 8px;
+      align-items: end;
+    }
+
+    .actions {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+      margin-top: 16px;
+    }
+
+    button {
+      border: 1px solid transparent;
+      border-radius: 10px;
+      min-height: 40px;
+      padding: 8px 13px;
+      cursor: pointer;
+      background: linear-gradient(180deg, #8b5cf6 0%, var(--brand) 100%);
+      color: #fff;
+      font-weight: 800;
+      transition: transform 0.16s ease, box-shadow 0.18s ease, filter 0.2s ease;
+      box-shadow: 0 10px 20px rgba(124, 58, 237, 0.28);
+    }
+
+    button:hover {
+      transform: translateY(-1px);
+      filter: brightness(0.98);
+    }
+
+    button:active {
+      transform: translateY(0);
+    }
+
+    button.secondary {
+      background: #fff;
+      color: #4c1d95;
+      border-color: var(--line);
+      box-shadow: 0 4px 14px rgba(15, 23, 42, 0.08);
+    }
+
+    button.secondary:hover {
+      background: var(--soft);
+    }
+
+    button.danger {
+      background: #fff;
+      color: var(--danger);
+      border-color: #fecaca;
+      box-shadow: 0 4px 14px rgba(220, 38, 38, 0.15);
+    }
+
+    .topbar {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      gap: 16px;
+      margin-bottom: 18px;
+    }
+
+    .summary {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(140px, 1fr));
+      gap: 10px;
+      margin-bottom: 16px;
+    }
+
+    .stat,
+    .panel {
+      background: #fff;
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+    }
+
+    .stat {
+      padding: 13px;
+      box-shadow: 0 8px 24px rgba(15, 23, 42, 0.06);
+    }
+
+    .stat strong {
+      display: block;
+      font-size: 22px;
+      margin-bottom: 2px;
+      letter-spacing: -0.01em;
+    }
+
+    .stat span {
+      color: var(--muted);
+      font-size: 11px;
+      font-weight: 800;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+    }
+
+    .panel {
+      overflow: hidden;
+      box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.6);
+    }
+
+    .table-wrap {
+      overflow: auto;
+      max-height: calc(100vh - 240px);
+    }
+
+    table {
+      width: 100%;
+      border-collapse: separate;
+      border-spacing: 0;
+      min-width: 760px;
+      background: #fff;
+    }
+
+    th,
+    td {
+      border-bottom: 1px solid var(--line);
+      border-right: 1px solid var(--line);
+      padding: 10px 11px;
+      text-align: left;
+      vertical-align: top;
+      white-space: nowrap;
+    }
+
+    th:last-child,
+    td:last-child {
+      border-right: 0;
+    }
+
+    th {
+      position: sticky;
+      top: 0;
+      z-index: 1;
+      background: #ede9fe;
+      color: #4c1d95;
+      font-size: 12px;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+    }
+
+    tbody tr:nth-child(even) td {
+      background: #f6f4ff;
+    }
+
+    .day {
+      font-weight: 800;
+    }
+
+    .weekend td {
+      background: var(--warn) !important;
+    }
+
+    .empty {
+      display: grid;
+      min-height: 360px;
+      place-items: center;
+      text-align: center;
+      padding: 30px;
+    }
+
+    .empty div {
+      max-width: 420px;
+    }
+
+    .badge {
+      display: inline-flex;
+      align-items: center;
+      border-radius: 999px;
+      padding: 3px 8px;
+      background: var(--soft);
+      color: #4c1d95;
+      font-size: 11px;
+      font-weight: 800;
+      margin-top: 4px;
+    }
+
+    .warnings {
+      margin: 0 0 14px;
+      padding: 0;
+      list-style: none;
+      display: grid;
+      gap: 8px;
+    }
+
+    .warnings li {
+      background: #fff8e8;
+      border: 1px solid #f8dd9f;
+      color: #78350f;
+      border-radius: 10px;
+      padding: 10px 11px;
+      font-size: 13px;
+    }
+
+    .counts {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(190px, 1fr));
+      gap: 10px;
+      margin-top: 16px;
+    }
+
+    .count-card {
+      background: #fff;
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      padding: 13px;
+      box-shadow: 0 8px 22px rgba(15, 23, 42, 0.06);
+    }
+
+    .count-card strong {
+      display: block;
+      margin-bottom: 8px;
+    }
+
+    .count-card span {
+      display: block;
+      color: var(--muted);
+      font-size: 13px;
+      line-height: 1.6;
+    }
+
+    .theme-pill {
+      display: inline-flex;
+      align-items: center;
+      margin-bottom: 12px;
+      padding: 4px 10px;
+      border-radius: 999px;
+      background: rgba(139, 92, 246, 0.2);
+      border: 1px solid rgba(196, 181, 253, 0.4);
+      color: #ddd6fe;
+      font-size: 11px;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      font-weight: 700;
+    }
+
+    @media (max-width: 920px) {
+      .app {
+        grid-template-columns: 1fr;
+        padding: 12px;
+      }
+
+      .summary {
+        grid-template-columns: repeat(2, 1fr);
+      }
+
+      .topbar {
+        display: block;
+      }
+    }
+
+    @media print {
+      body {
+        background: #fff;
+      }
+
+      aside,
+      .topbar .actions,
+      .warnings {
+        display: none;
+      }
+
+      .app {
+        display: block;
+        padding: 0;
+      }
+
+      main {
+        padding: 0;
+        box-shadow: none;
+        border: 0;
+        background: #fff;
+      }
+
+      .table-wrap {
+        max-height: none;
+        overflow: visible;
+      }
+
+      table {
+        min-width: 0;
+        font-size: 11px;
+      }
+
+      th {
+        position: static;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="app">
+    <aside>
+      <div class="theme-pill">Modern UI active</div>
+      <h1>Duty Roster</h1>
+      <p>Create a monthly roster for three shifts with fixed 2- or 3-person teams.</p>
+
+      <div class="stack">
+        <div class="grid">
+          <div>
+            <label for="month">Month</label>
+            <input id="month" type="month">
+          </div>
+          <div>
+            <label for="startIndex">Start from</label>
+            <select id="startIndex"></select>
+          </div>
+        </div>
+
+      <div>
+            <label for="staff">Groups</label>
+            <textarea id="staff" spellcheck="false">Group 1: Suhaadh, Jinaah, Raoof
+Group 2: Azleen, Sayaan, Naushad
+Group 3: Shaan, Tholaal, Nimal
+Group 4: Saahil, Azmath</textarea>
+      </div>
+      </div>
+
+      <h2>Three Shifts</h2>
+      <div class="stack">
+        <div class="shift-row">
+          <div>
+            <label for="shift1">Shift 1</label>
+            <input id="shift1" value="Shift 1">
+          </div>
+          <div>
+            <label for="time1">Time</label>
+            <input id="time1" value="08-16">
+          </div>
+        </div>
+        <div class="shift-row">
+          <div>
+            <label for="shift2">Shift 2</label>
+            <input id="shift2" value="Shift 2">
+          </div>
+          <div>
+            <label for="time2">Time</label>
+            <input id="time2" value="16-00">
+          </div>
+        </div>
+        <div class="shift-row">
+          <div>
+            <label for="shift3">Shift 3</label>
+            <input id="shift3" value="Shift 3">
+          </div>
+          <div>
+            <label for="time3">Time</label>
+            <input id="time3" value="00-08">
+          </div>
+        </div>
+      </div>
+
+      <h2>Rules</h2>
+      <div class="stack">
+        <div class="grid">
+          <div>
+            <label for="staffPerShift">Plain-name group size</label>
+            <select id="staffPerShift">
+              <option value="2">2 persons</option>
+              <option value="3" selected>3 persons</option>
+            </select>
+          </div>
+        </div>
+        <div>
+          <label for="leave">Leave / unavailable dates</label>
+          <textarea id="leave" placeholder="Example:&#10;Suhaadh: 2026-05-05, 2026-05-12&#10;Azleen: 2026-05-09"></textarea>
+        </div>
+      </div>
+
+      <div class="actions">
+        <button id="generate">Generate</button>
+        <button class="secondary" id="download">Export CSV</button>
+        <button class="secondary" id="print">Print</button>
+        <button class="danger" id="clear">Clear</button>
+      </div>
+    </aside>
+
+    <main>
+      <div class="topbar">
+        <div>
+          <h1 id="title">3 Shift Monthly Roster</h1>
+          <p id="subtitle">Add staff, define shifts, then generate the schedule.</p>
+        </div>
+        <div class="actions">
+          <button class="secondary" id="copy">Copy Table</button>
+        </div>
+      </div>
+
+      <ul class="warnings" id="warnings"></ul>
+
+      <section class="summary">
+        <div class="stat"><strong id="daysCount">0</strong><span>Days</span></div>
+        <div class="stat"><strong id="staffCount">0</strong><span>Staff</span></div>
+        <div class="stat"><strong id="shiftCount">3 + Off</strong><span>Daily Columns</span></div>
+        <div class="stat"><strong id="dutiesCount">0</strong><span>Roster Spots</span></div>
+      </section>
+
+      <section class="panel">
+        <div class="table-wrap" id="tableWrap">
+          <div class="empty">
+            <div>
+              <h1>Ready for duty planning</h1>
+              <p>Use the controls on the left to make a fair rotation across Morning, Evening, and Night shifts.</p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section class="counts" id="counts"></section>
+    </main>
+  </div>
+
+  <script>
+    const els = {
+      month: document.querySelector("#month"),
+      staff: document.querySelector("#staff"),
+      startIndex: document.querySelector("#startIndex"),
+      shifts: [
+        [document.querySelector("#shift1"), document.querySelector("#time1")],
+        [document.querySelector("#shift2"), document.querySelector("#time2")],
+        [document.querySelector("#shift3"), document.querySelector("#time3")]
+      ],
+      staffPerShift: document.querySelector("#staffPerShift"),
+      leave: document.querySelector("#leave"),
+      generate: document.querySelector("#generate"),
+      download: document.querySelector("#download"),
+      print: document.querySelector("#print"),
+      clear: document.querySelector("#clear"),
+      copy: document.querySelector("#copy"),
+      tableWrap: document.querySelector("#tableWrap"),
+      title: document.querySelector("#title"),
+      subtitle: document.querySelector("#subtitle"),
+      warnings: document.querySelector("#warnings"),
+      counts: document.querySelector("#counts"),
+      daysCount: document.querySelector("#daysCount"),
+      staffCount: document.querySelector("#staffCount"),
+      shiftCount: document.querySelector("#shiftCount"),
+      dutiesCount: document.querySelector("#dutiesCount")
+    };
+
+    let rosterRows = [];
+
+    function initMonth() {
+      const now = new Date();
+      els.month.value = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, "0")}`;
+    }
+
+    function splitMemberNames(value) {
+      const text = value.trim();
+      if (!text) return [];
+      if (text.includes(",")) {
+        return text.split(",").map(name => name.trim()).filter(Boolean);
+      }
+      return text.split(/\s+/).map(name => name.trim()).filter(Boolean);
+    }
+
+    function getPlainStaffNames() {
+      return els.staff.value.split(/\n|,/).map(name => name.trim()).filter(Boolean);
+    }
+
+    function parseTeamInput() {
+      const lines = els.staff.value.split("\n").map(line => line.trim()).filter(Boolean);
+      const hasGroups = lines.some(line => line.includes(":"));
+
+      if (!hasGroups) {
+        return {
+          hasGroups: false,
+          staff: getPlainStaffNames(),
+          teams: []
+        };
+      }
+
+      const teams = [];
+      const staff = [];
+
+      lines.forEach((line, index) => {
+        const separatorIndex = line.indexOf(":");
+        if (separatorIndex === -1) return;
+        const rawName = line.slice(0, separatorIndex).trim();
+        const rawMembers = line.slice(separatorIndex + 1);
+        const members = splitMemberNames(rawMembers);
+        if (!members.length) return;
+
+        teams.push({
+          name: rawName || `Group ${index + 1}`,
+          members
+        });
+        staff.push(...members);
+      });
+
+      return { hasGroups: true, staff, teams };
+    }
+
+    function getStaff() {
+      return parseTeamInput().staff;
+    }
+
+    function getShifts() {
+      return els.shifts.map(([nameEl, timeEl], index) => ({
+        key: `shift${index + 1}`,
+        name: nameEl.value.trim() || `Shift ${index + 1}`,
+        time: timeEl.value.trim()
+      }));
+    }
+
+    function updateStartOptions() {
+      const parsed = parseTeamInput();
+      const options = parsed.hasGroups ? parsed.teams.map(team => team.name) : parsed.staff;
+      els.startIndex.innerHTML = "";
+      options.forEach((name, index) => {
+        const option = document.createElement("option");
+        option.value = String(index);
+        option.textContent = name;
+        els.startIndex.appendChild(option);
+      });
+      if (!options.length) {
+        const option = document.createElement("option");
+        option.value = "0";
+        option.textContent = "Add groups";
+        els.startIndex.appendChild(option);
+      }
+    }
+
+    function parseLeave() {
+      const map = new Map();
+      els.leave.value.split("\n").forEach(line => {
+        const [rawName, rawDates] = line.split(":");
+        if (!rawName || !rawDates) return;
+        const name = rawName.trim().toLowerCase();
+        const dates = rawDates.split(",").map(date => date.trim()).filter(Boolean);
+        map.set(name, new Set(dates));
+      });
+      return map;
+    }
+
+    function formatDate(date) {
+      return `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, "0")}-${String(date.getDate()).padStart(2, "0")}`;
+    }
+
+    function monthName(value) {
+      const [year, month] = value.split("-").map(Number);
+      return new Date(year, month - 1, 1).toLocaleDateString(undefined, { month: "long", year: "numeric" });
+    }
+
+    function getStaffPerShift() {
+      const value = Number(els.staffPerShift.value || 2);
+      return Math.min(3, Math.max(2, Math.floor(value)));
+    }
+
+    function createTeams(staff, staffPerShift, startIndex) {
+      const orderedStaff = [...staff.slice(startIndex), ...staff.slice(0, startIndex)];
+      const teams = [];
+      const reserves = [];
+
+      for (let index = 0; index < orderedStaff.length; index += staffPerShift) {
+        const members = orderedStaff.slice(index, index + staffPerShift);
+        if (members.length === staffPerShift) {
+          teams.push({
+            name: `Team ${teams.length + 1}`,
+            members
+          });
+        } else {
+          reserves.push(...members);
+        }
+      }
+
+      return { teams, reserves };
+    }
+
+    function getTeamConfig(staffPerShift, startIndex) {
+      const parsed = parseTeamInput();
+
+      if (parsed.hasGroups) {
+        return {
+          staff: parsed.staff,
+          teams: [...parsed.teams.slice(startIndex), ...parsed.teams.slice(0, startIndex)],
+          reserves: []
+        };
+      }
+
+      return {
+        staff: parsed.staff,
+        ...createTeams(parsed.staff, staffPerShift, startIndex)
+      };
+    }
+
+    function makeRoster() {
+      const shifts = getShifts();
+      const warnings = [];
+      const leave = parseLeave();
+      const staffPerShift = getStaffPerShift();
+      const start = Number(els.startIndex.value || 0);
+      const { staff, teams, reserves } = getTeamConfig(staffPerShift, start);
+      const errors = [];
+
+      if (!els.month.value) errors.push("Choose a month before generating.");
+      if (!staff.length) errors.push("Add at least one staff name.");
+      if (!teams.length) errors.push("Add at least one group.");
+
+      if (errors.length) {
+        renderWarnings(errors);
+        return;
+      }
+
+      const [year, month] = els.month.value.split("-").map(Number);
+      const daysInMonth = new Date(year, month, 0).getDate();
+      const counts = Object.fromEntries(staff.map(name => [name, Object.fromEntries(shifts.map(shift => [shift.name, 0]))]));
+      const totalCounts = Object.fromEntries(staff.map(name => [name, 0]));
+      const offCounts = Object.fromEntries(staff.map(name => [name, 0]));
+      const teamCounts = Object.fromEntries(teams.map(team => [team.name, {
+        total: 0,
+        shifts: Object.fromEntries(shifts.map(shift => [shift.name, 0]))
+      }]));
+
+      if (reserves.length) {
+        warnings.push(`${reserves.join(", ")} ${reserves.length === 1 ? "is" : "are"} not in a full team for ${staffPerShift}-person shifts.`);
+      }
+
+      if (teams.length < shifts.length + 1) {
+        warnings.push(`${shifts.length + 1} groups are recommended so Shift 1, Shift 2, Shift 3, and Off are all filled every day.`);
+      }
+
+      rosterRows = [];
+
+      for (let day = 1; day <= daysInMonth; day++) {
+        const date = new Date(year, month - 1, day);
+        const iso = formatDate(date);
+        const offList = [];
+        const row = {
+          date: iso,
+          day: date.toLocaleDateString(undefined, { weekday: "short" }),
+          isWeekend: date.getDay() === 0 || date.getDay() === 6,
+          offList,
+          shifts: Object.fromEntries(shifts.map(shift => [shift.name, []]))
+        };
+
+        teams.forEach((team, teamIndex) => {
+          const leaveMembers = team.members.filter(name => leave.get(name.toLowerCase())?.has(iso));
+          const columnCount = shifts.length + 1;
+          const rotationStep = (day - 1) % columnCount;
+          const columnIndex = (teamIndex - rotationStep + columnCount) % columnCount;
+
+          if (columnIndex < shifts.length && !leaveMembers.length) {
+            const shift = shifts[columnIndex];
+            teamCounts[team.name].total += 1;
+            teamCounts[team.name].shifts[shift.name] += 1;
+
+            team.members.forEach(name => {
+              counts[name][shift.name] += 1;
+              totalCounts[name] += 1;
+            });
+
+            row.shifts[shift.name].push(`${team.name}: ${team.members.join(", ")}`);
+            return;
+          }
+
+          if (columnIndex < shifts.length && leaveMembers.length) {
+            const shift = shifts[columnIndex];
+            row.shifts[shift.name].push("Unfilled");
+            warnings.push(`${shift.name} on ${iso} has ${team.name} on leave.`);
+          }
+
+          const reason = leaveMembers.length ? `Leave: ${leaveMembers.join(", ")}` : "Off";
+          team.members.forEach(name => {
+            offCounts[name] += 1;
+          });
+          offList.push(`${team.name} (${reason}): ${team.members.join(", ")}`);
+        });
+
+        shifts.forEach(shift => {
+          if (!row.shifts[shift.name].length) {
+            row.shifts[shift.name].push("Unfilled");
+            warnings.push(`${shift.name} on ${iso} is unfilled.`);
+          }
+        });
+
+        if (reserves.length) {
+          reserves.forEach(name => {
+            offCounts[name] += 1;
+          });
+          offList.push(`Reserve (Off): ${reserves.join(", ")}`);
+        }
+
+        rosterRows.push(row);
+      }
+
+      renderRoster(rosterRows, shifts, counts, totalCounts, offCounts, teams, teamCounts, reserves, warnings);
+    }
+
+    function renderWarnings(warnings) {
+      els.warnings.innerHTML = "";
+      warnings.slice(0, 8).forEach(text => {
+        const li = document.createElement("li");
+        li.textContent = text;
+        els.warnings.appendChild(li);
+      });
+    }
+
+    function renderRoster(rows, shifts, counts, totalCounts, offCounts, teams, teamCounts, reserves, warnings) {
+      renderWarnings(warnings);
+      els.title.textContent = `3 Shift Roster - ${monthName(els.month.value)}`;
+      els.subtitle.textContent = `${teams.length} fixed teams assigned across ${shifts.map(shift => shift.name).join(", ")} plus Off as the 4th shift.`;
+      els.daysCount.textContent = rows.length;
+      els.staffCount.textContent = getStaff().length;
+      els.shiftCount.textContent = `${shifts.length} + Off`;
+      els.dutiesCount.textContent = rows.length * getStaff().length;
+
+      const table = document.createElement("table");
+      const thead = document.createElement("thead");
+      const tbody = document.createElement("tbody");
+      thead.innerHTML = `<tr><th>Date</th><th>Day</th>${shifts.map(shift => `<th>${escapeHtml(shift.name)}<br><span class="badge">${escapeHtml(shift.time || "Shift")}</span></th>`).join("")}<th>Off<br><span class="badge">4th shift</span></th></tr>`;
+
+      rows.forEach(row => {
+        const tr = document.createElement("tr");
+        if (row.isWeekend) tr.classList.add("weekend");
+        tr.innerHTML = `<td class="day">${row.date}</td><td>${row.day}</td>${shifts.map(shift => `<td>${escapeHtml(row.shifts[shift.name].join("; "))}</td>`).join("")}<td>${escapeHtml(row.offList.join("; ") || "-")}</td>`;
+        tbody.appendChild(tr);
+      });
+
+      table.appendChild(thead);
+      table.appendChild(tbody);
+      els.tableWrap.innerHTML = "";
+      els.tableWrap.appendChild(table);
+      renderCounts(counts, totalCounts, offCounts, shifts, teams, teamCounts, reserves);
+    }
+
+    function renderCounts(counts, totalCounts, offCounts, shifts, teams, teamCounts, reserves) {
+      els.counts.innerHTML = "";
+      teams.forEach(team => {
+        const card = document.createElement("article");
+        card.className = "count-card";
+        const details = team.members.map(name => `${name} (${totalCounts[name]} duties, ${offCounts[name]} off/leave)`).join(", ");
+        card.innerHTML = `<strong>${escapeHtml(team.name)}: ${teamCounts[team.name].total} shifts</strong><span>${escapeHtml(details)}</span>${shifts.map(shift => `<span>${escapeHtml(shift.name)}: ${teamCounts[team.name].shifts[shift.name]}</span>`).join("")}`;
+        els.counts.appendChild(card);
+      });
+
+      if (reserves.length) {
+        const card = document.createElement("article");
+        card.className = "count-card";
+        const reserveDetails = reserves.map(name => `${name} (${offCounts[name]} off/leave)`).join(", ");
+        card.innerHTML = `<strong>Reserve</strong><span>${escapeHtml(reserveDetails)}</span>`;
+        els.counts.appendChild(card);
+      }
+    }
+
+    function escapeHtml(value) {
+      return String(value).replace(/[&<>"']/g, char => ({
+        "&": "&amp;",
+        "<": "&lt;",
+        ">": "&gt;",
+        "\"": "&quot;",
+        "'": "&#039;"
+      }[char]));
+    }
+
+    function toCsv() {
+      if (!rosterRows.length) return "";
+      const shifts = getShifts();
+      const header = ["Date", "Day", ...shifts.map(shift => `${shift.name} ${shift.time}`), "Off (4th shift)"];
+      const lines = [header, ...rosterRows.map(row => [row.date, row.day, ...shifts.map(shift => row.shifts[shift.name].join("; ")), row.offList.join("; ")])];
+      return lines.map(line => line.map(cell => `"${String(cell).replace(/"/g, '""')}"`).join(",")).join("\n");
+    }
+
+    function downloadCsv() {
+      if (!rosterRows.length) makeRoster();
+      const csv = toCsv();
+      if (!csv) return;
+      const blob = new Blob([csv], { type: "text/csv" });
+      const url = URL.createObjectURL(blob);
+      const link = document.createElement("a");
+      link.href = url;
+      link.download = `duty-roster-${els.month.value}.csv`;
+      link.click();
+      URL.revokeObjectURL(url);
+    }
+
+    async function copyTable() {
+      if (!rosterRows.length) makeRoster();
+      const csv = toCsv();
+      if (!csv) return;
+      await navigator.clipboard.writeText(csv);
+      els.copy.textContent = "Copied";
+      setTimeout(() => {
+        els.copy.textContent = "Copy Table";
+      }, 1400);
+    }
+
+    function clearAll() {
+      els.staff.value = "";
+      els.leave.value = "";
+      els.staffPerShift.value = "3";
+      rosterRows = [];
+      updateStartOptions();
+      els.tableWrap.innerHTML = `<div class="empty"><div><h1>Ready for duty planning</h1><p>Add staff and generate a roster whenever you are ready.</p></div></div>`;
+      els.counts.innerHTML = "";
+      els.warnings.innerHTML = "";
+      els.daysCount.textContent = "0";
+      els.staffCount.textContent = "0";
+      els.dutiesCount.textContent = "0";
+    }
+
+    els.staff.addEventListener("input", updateStartOptions);
+    els.generate.addEventListener("click", makeRoster);
+    els.download.addEventListener("click", downloadCsv);
+    els.print.addEventListener("click", () => window.print());
+    els.clear.addEventListener("click", clearAll);
+    els.copy.addEventListener("click", copyTable);
+
+    initMonth();
+    updateStartOptions();
+  </script>
+</body>
+</html>
